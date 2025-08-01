@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Our Love Gallery</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Quicksand:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #ffafbd, #ffc3a0, #ffdde1);
+            background-size: 300% 300%;
+            animation: gradient 15s ease infinite;
+            font-family: 'Quicksand', sans-serif;
+            overflow: hidden;
+            position: relative;
+            transition: background 0.5s ease;
+        }
+
+        .glass-container {
+            position: absolute;
+            top: 10%;
+            left: 20%;
+            transform: translate(-50%, 0);
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 30px;
+            padding: 40px 60px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            animation: float 6s ease-in-out infinite;
+            z-index: 3;
+        }
+
+        h1 {
+            font-family: 'Dancing Script', cursive;
+            font-size: 5em;
+            background: linear-gradient(45deg, #ff6b6b, #fc5c7d, #6c5b7b);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 30px;
+        }
+
+        .subtitle {
+            color: white;
+            font-size: 1.2em;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+
+        .btn-container {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 15px 40px;
+            font-size: 1.2em;
+            background: linear-gradient(45deg, #fc5c7d, #6c5b7b);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.5s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(120deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .love-msg {
+            position: absolute;
+            bottom: 20px;
+            width: 100%;
+            text-align: center;
+            font-size: 0.9em;
+            color: white;
+            opacity: 0.8;
+        }
+
+        .heart {
+            position: absolute;
+            font-size: 1.5rem;
+            animation: floatHeart linear forwards;
+            opacity: 0.6;
+            z-index: 1;
+        }
+
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0); }
+        }
+
+        @keyframes floatHeart {
+            0% { transform: translateY(100vh); opacity: 0; }
+            20% { opacity: 0.6; }
+            100% { transform: translateY(-100vh); opacity: 0; }
+        }
+
+        .gallery-container, .nav-button, .stars, .desc-modal {
+            display: none;
+        }
+
+        .gallery-active .gallery-container,
+        .gallery-active .nav-button,
+        .gallery-active .stars {
+            display: flex;
+        }
+
+        .gallery-active .glass-container,
+        .gallery-active .love-msg {
+            display: none;
+        }
+
+        .gallery-container {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            perspective: 2000px;
+            z-index: 2;
+        }
+
+        .gallery {
+            position: relative;
+            width: 300px;
+            height: 400px;
+            transform-style: preserve-3d;
+        }
+
+        .card {
+            position: absolute;
+            width: 300px;
+            height: 400px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            overflow: hidden;
+            cursor: pointer;
+            transform-origin: center center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .card.active {
+            transform: scale(1.2) translateZ(200px);
+            box-shadow: 0 20px 60px rgba(255, 192, 203, 0.4);
+        }
+
+        .number {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background: rgba(255, 192, 203, 0.7);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 15px;
+            font-size: 14px;
+            backdrop-filter: blur(5px);
+        }
+
+        .nav-button {
+            position: fixed;
+            top: 50%;
+            width: 50px;
+            height: 50px;
+            background: rgba(255, 192, 203, 0.2);
+            border: 2px solid rgba(255, 192, 203, 0.5);
+            border-radius: 50%;
+            cursor: pointer;
+            z-index: 1000;
+        }
+
+        .nav-button.prev { left: 30px; }
+        .nav-button.next { right: 30px; }
+
+        .nav-button::before {
+            content: '';
+            position: absolute;
+            width: 15px;
+            height: 15px;
+            border-top: 3px solid white;
+            border-right: 3px solid white;
+        }
+
+        .nav-button.prev::before { transform: rotate(-135deg); margin-left: 5px; }
+        .nav-button.next::before { transform: rotate(45deg); margin-right: 5px; }
+
+        .desc-modal {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            display: none;
+        }
+
+        .desc-content {
+            background: white;
+            padding: 20px 30px;
+            border-radius: 10px;
+            max-width: 80%;
+            text-align: center;
+            font-size: 1.2em;
+        }
+
+
+    </style>
+</head>
+<body>
+    <div class="glass-container">
+        <h1>Welcome to Our Gallery</h1>
+        <p class="subtitle">Every moment with you is a treasure worth keeping...</p>
+        <div class="btn-container">
+            <button class="btn color-btn">Change Colors 🎨</button>
+            <button class="btn enter-btn">Enter Our Love Story ✨</button>
+        </div>
+    </div>
+
+    <p class="love-msg">Made with love, for my pookie 💕</p>
+
+    <div class="gallery-container">
+        <div class="gallery"></div>
+    </div>
+
+    <button class="nav-button prev" aria-label="Previous"></button>
+    <button class="nav-button next" aria-label="Next"></button>
+
+    <div class="desc-modal" id="descModal">
+        <div class="desc-content">
+            <span id="descText"></span><br><br>
+            <button onclick="document.getElementById('descModal').style.display='none'">Close</button>
+        </div>
+    </div>
+
+    <script>
+        const heartEmojis = ['💗', '💖', '💝', '💕', '♥️'];
+        const gradients = [
+            'linear-gradient(135deg, #ffafbd, #ffc3a0, #ffdde1)',
+            'linear-gradient(135deg, #e0c3fc, #8ec5fc, #c2e9fb)',
+            'linear-gradient(135deg, #ff9a9e, #fad0c4, #fad0c4)'
+        ];
+
+        let currentGradient = 0;
+
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.classList.add('heart');
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.animationDuration = Math.random() * 5 + 3 + 's';
+            heart.innerHTML = heartEmojis[Math.floor(Math.random() * heartEmojis.length)];
+            document.body.appendChild(heart);
+            heart.addEventListener('animationend', () => heart.remove());
+        }
+
+        setInterval(createHeart, 600);
+
+        document.querySelector('.color-btn').addEventListener('click', () => {
+            currentGradient = (currentGradient + 1) % gradients.length;
+            document.body.style.background = gradients[currentGradient];
+        });
+
+        document.querySelector('.enter-btn').addEventListener('click', () => {
+            document.body.classList.add('gallery-active');
+            document.getElementById('descModal').style.display = 'none';
+            document.getElementById('descText').textContent = '';
+            createGallery();
+        });
+
+        const imageData = [
+                { src: '11.jpg', desc: 'Its the photo jis din aap mammi k bahar jane k baad saaree pehen k masti kiye aur mujhe bheje...' },
+                { src: '22.jpg', desc: 'Ye bhi usi ka pic hai but isme ek chij alag hai ki aapne sleeveless pehna aur mujhe isliye bheja taki mai pighal saku... yaad hai kya ??' },
+                { src: '33.jpg', desc: 'Haa... ye wo pehla din pehla lamha jis din maine aapko pehli baar dekha tha us din yrr aap sach me bahot jyada hi sundar lag rahe the bas usi din decide kiya tha ki mai aapse shadi karunga' },
+                { src: '44.jpg', desc: 'Ye hai night wala pic us din pehli baar aisa laga tha ki aap mujhe hamesha khush rakhoge hamesha hasate rahoge... raat ki masti bahot mast thi...#latenighttalks pehla couple jo raat me comedy kar rahe hai' },
+                { src: '55.jpg', desc: 'Ye photo aapne tab bheja tha jab maine bola tha ki mama ne aapka photo mangaya hai... aur un sab photo me mujhe ye jyada pasand aaya tha' },
+                { src: '66.jpg', desc: 'Ye bhi us pehle din ka pic hai.. mere pass koi pic nhi tha to maine ye pic screenshot liya tha taki apne gharwalo ko dikha saku' },
+                { src: '77.jpg', desc: 'ye photo to pata nhi kab ka hai but aapke insta pe tha aur isme aap saaree me bahot jyada sundar lag rahe ho ye maine isliye rakha hai taki  hamesha dekhte rahunga ki aap shadi k baad saaree me bhi itne cute dikhoge' },
+                { src: '88.jpg', desc: 'ye last year diwali ka pic hai aapne bataya tha aur sach batau isse dekhne k baad aisa laga nhi tha ki aap ho kyuki isme face thoda alag hai aapka but is photo pe bhi fida hu' },
+                { src: '99.jpg', desc: 'Ye to us din ka jab aap apni mama k bahubhoj me gaye the...madhumakkhi k katne k baad jab aapka face sahi hua tha' },
+                { src: '1010.jpg', desc: 'Aur ye pic yrrr loved it... itna jyada pyaare lag rahe the us shadi k din jab aap full white you know white saaree white mangtika haaayyyyyyeeeeee yrrr wo din nhi bhulta mangtika kitna cute lag raha tha aapke uper...Us din to agr aake Hii bolte na to mai shock se behosh ho jata' },
+                { src: '1111.jpg', desc: 'ye pic aapne bheja tha jab mai aapko shayari suna raha tha aur aap bole the ki mere baal pe shayari banake sunao' }
+        ];
+
+        function createGallery() {
+            const gallery = document.querySelector('.gallery');
+            gallery.innerHTML = '';
+            const totalCards = imageData.length;
+            let radius = window.innerWidth < 600 ? 180 : 600;
+            let currentAngle = 0;
+
+            imageData.forEach((data, i) => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `<img src="${data.src}" alt="Image ${i + 1}"><div class="number">${i + 1}</div>`;
+                card.addEventListener('click', () => showDescription(data.desc));
+                gallery.appendChild(card);
+            });
+
+            function updateCards() {
+                const cards = document.querySelectorAll('.card');
+                cards.forEach((card, index) => {
+                    const angle = (currentAngle + index * (360 / totalCards)) * (Math.PI / 180);
+                    const x = Math.sin(angle) * radius;
+                    const z = Math.cos(angle) * radius;
+                    const rotateY = angle * (180 / Math.PI);
+                    card.style.transform = `translate3d(${x}px, 0, ${z}px) rotateY(${rotateY}deg)`;
+
+                    const norm = ((currentAngle + index * (360 / totalCards)) % 360 + 360) % 360;
+                    card.classList.toggle('active', norm > 350 || norm < 10);
+                });
+            }
+
+            function autoRotateGallery() {
+                currentAngle += 0.2;
+                updateCards();
+                requestAnimationFrame(autoRotateGallery);
+            }
+
+            updateCards();
+            autoRotateGallery();
+        }
+
+        function showDescription(desc) {
+            const modal = document.getElementById('descModal');
+            const text = document.getElementById('descText');
+            text.textContent = desc;
+            modal.style.display = 'flex';
+        }
+    </script>
+</body>
+</html>
